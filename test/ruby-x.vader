@@ -1,0 +1,112 @@
+Execute (Initialize):
+  RubyX
+
+  ruby << RB
+    def assert_equal a, b
+      "AssertEqual #{a.to_v}, #{b.to_v}".vim!
+    end
+  RB
+
+  unlet! g:hello g:goodbye g:howdy g:array g:dict g:count
+  let g:hello   = 'world'
+  let g:goodbye = 'world'
+  let g:howdy   = 'world'
+  let g:array   = ['hello', 'world', 1, 2, 3]
+  let g:dict    = { 'hello': 'world' }
+  let g:count   = 0
+
+Execute ([]):
+  ruby << RB
+    assert_equal 'world', VIM['g:hello']
+  RB
+
+Execute (VIM::exists?):
+  ruby << RB
+    assert_equal true,  VIM.exists?('g:hello')
+    assert_equal false, VIM.exists?('g:world')
+  RB
+
+Execute (VIM.unlet):
+  ruby << RB
+    assert_equal true,  VIM.exists?('g:goodbye')
+    assert_equal true,  VIM.exists?('g:howdy')
+    VIM.unlet 'g:goodbye', 'g:howdy'
+    assert_equal false, VIM.exists?('g:goodbye')
+    assert_equal false, VIM.exists?('g:howdy')
+  RB
+
+Execute (VIM[]=):
+  ruby << RB
+    [1000, 'goodbye', %w[a b c d], { 'a' => 1, 'b' => 'c' }].each do |data|
+      VIM.unlet 'g:hello'
+      VIM['g:hello'] = data
+      assert_equal data, VIM['g:hello']
+    end
+  RB
+
+Execute (String#to_v):
+  ruby << RB
+    assert_equal '"Hello World"', 'Hello World'.to_v
+    assert_equal '"\"Hello\" World"', '"Hello" World'.to_v
+  RB
+
+Execute (Array#to_v):
+  ruby << RB
+    assert_equal '["Hello", "World"]', %w[Hello World].to_v
+  RB
+
+Execute (Hash#to_v):
+  ruby << RB
+    assert_equal '{"Hello": "World"}', {'Hello' => 'World'}.to_v
+  RB
+
+Execute (Range#to_v):
+  ruby << RB
+    assert_equal '["a", "b", "c", "d"]', ('a'..'d').to_v
+    assert_equal '["a", "b", "c"]',      ('a'...'d').to_v
+    assert_equal 'range(1, 4)',          (1..4).to_v
+    assert_equal 'range(1, 3)',          (1...4).to_v
+  RB
+
+Execute (Numeric#to_v):
+  ruby << RB
+    assert_equal '100', 100.to_v
+    assert_equal '1.23', 1.23.to_v
+  RB
+
+Execute (Boolean#to_v):
+  ruby << RB
+    assert_equal '1', true.to_v
+    assert_equal '0', false.to_v
+  RB
+
+Execute (String#vim!):
+  AssertEqual 0, g:count
+  let g:count += 1
+  AssertEqual 1, g:count
+  ruby "let g:count += 1".vim!
+  AssertEqual 2, g:count
+
+Execute (String#vim?):
+  ruby assert_equal 4, "g:count * 2".vim?
+
+Execute (VIM.interruptible (TODO: how? feedkeys doesn't work)):
+  ruby << RB
+    feeder = Thread.new {
+      sleep 0.5
+      VIM.call(:feedkeys, "\C-c")
+    }
+
+    begin
+      VIM.interruptible do
+        sleep 2
+
+        # Should not reach here
+        assert_equal false, true
+      end
+    rescue Interrupt
+      assert_equal true, true
+    end
+
+    feeder.join
+  RB

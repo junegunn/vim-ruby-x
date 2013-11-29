@@ -3,6 +3,15 @@ vim-ruby-x
 
 `:RubyX` command extends Ruby interface of Vim, making it (marginally) easier to use.
 
+Installation
+------------
+
+Use your favorite plugin manager.
+
+- [vim-plug](https://github.com/junegunn/vim-plug)
+  1. Add `Plug 'junegunn/vim-ruby-x'` to .vimrc
+  2. Run `:PlugInstall`
+
 ### Easier variable access
 
 - `VIM[]`

@@ -58,7 +58,8 @@ class << self
   # Returns the value of the variable of the given name
   # @param [#to_s] varname
   def [] varname
-    evaluate varname.to_s
+    varname = varname.to_s
+    exists?(varname) ? evaluate(varname) : nil
   end
 
   # Updates the variable of the given name

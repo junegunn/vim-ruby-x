@@ -24,6 +24,7 @@ Execute (VIM::exists?):
   ruby << RB
     assert_equal true,  VIM.exists?('g:hello')
     assert_equal false, VIM.exists?('g:world')
+    assert_equal true,  VIM['g:world'].nil?
   RB
 
 Execute (VIM.unlet):

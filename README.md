@@ -12,6 +12,9 @@ Use your favorite plugin manager.
   1. Add `Plug 'junegunn/vim-ruby-x'` to .vimrc
   2. Run `:PlugInstall`
 
+Features
+--------
+
 ### Easier variable access
 
 - `VIM[]`

@@ -114,6 +114,48 @@ class << self
       watcher.kill
     end
   end
+
+  # Executes normal mode commands. Mappings will be used.
+  # @param [String] cmd
+  # @return [nil]
+  def normal cmd
+    "normal #{cmd}".vim!
+  end
+
+  # Executes normal mode commands. Mappings will not be used.
+  # @return [nil]
+  def normal! cmd
+    "normal! #{cmd}".vim!
+  end
+
+  # Echoes the message. Highlight group can be optionally specified.
+  # @return [nil]
+  def echo *args
+    args.each_slice(2) do |pair|
+      msg, hl = pair
+      if hl
+        "echohl #{hl} | echon #{msg.to_v} | echohl None".vim!
+      else
+        "echon #{msg.to_v}".vim!
+      end
+    end
+    'echo'.vim!
+  end
+
+  # Echoes the message as an error message
+  # @param [#to_s] message
+  def error msg
+    "echoerr #{msg.to_v}".vim!
+  end
+
+private
+  def _echo cmd, msg, hl
+    if hl
+      "echohl #{hl} | #{cmd} #{msg.to_v} | echohl None".vim!
+    else
+      "#{cmd} #{msg.to_v}".vim!
+    end
+  end
 end
 end
 RB

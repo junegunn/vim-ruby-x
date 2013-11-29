@@ -25,7 +25,7 @@ Features
 
 ```ruby
 var1 = VIM['g:var1']
-var2 = VIM.fetch 'g:var2', 0
+var2 = VIM['g:var2'] || 0
 
 VIM['g:vars'] = { :vars => [var1, var2], :sum => var1 + var2 }
 
@@ -40,6 +40,13 @@ VIM.unlet 'g:var1', 'g:var2'
 ```ruby
 'redraw!'.vim!
 count = 'len(g:array)'.vim?
+```
+
+### Executing normal mode commands
+
+```ruby
+VIM.normal  'gqip'
+VIM.normal! 'gg=G'
 ```
 
 ### Vimscript representation of Ruby values
@@ -74,3 +81,11 @@ VIM.interruptible do
 end
 ```
 
+### Messages
+
+```ruby
+VIM.echo    'Welcome'
+VIM.echo    'Apples', :Identifier, ' are ', :Structure, 'red', :Error
+VIM.error   'Oops, try again'
+VIM.message 'This one is builtin'
+```

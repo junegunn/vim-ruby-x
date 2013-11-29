@@ -94,13 +94,13 @@ Execute (String#vim?):
 Execute (VIM.interruptible (TODO: how? feedkeys doesn't work)):
   ruby << RB
     feeder = Thread.new {
-      sleep 0.5
+      sleep 0.1
       VIM.call(:feedkeys, "\C-c")
     }
 
     begin
       VIM.interruptible do
-        sleep 2
+        sleep 0.5
 
         # Should not reach here
         assert_equal false, true
@@ -111,3 +111,72 @@ Execute (VIM.interruptible (TODO: how? feedkeys doesn't work)):
 
     feeder.join
   RB
+
+Given (some string):
+  Hello World
+
+Execute (VIM.normal):
+  if !empty(maparg('u', 'v'))
+    vunmap u
+  endif
+
+  ruby << RB
+    VIM.normal 'Vu'
+  RB
+
+Expect (lowercase string):
+  hello world
+
+Execute (VIM.normal uses mappings):
+  vmap u U
+  ruby << RB
+    VIM.normal 'Vu'
+  RB
+
+Expect (lowercase string):
+  HELLO WORLD
+
+Execute (VIM.normal! does not use mappings):
+  vmap u U
+  ruby << RB
+    VIM.normal! 'Vu'
+  RB
+
+Expect (lowercase string):
+  hello world
+
+Given:
+
+Execute (Cleanup):
+  if !empty(maparg('u', 'v'))
+    vunmap u
+  endif
+
+Execute (VIM.echo):
+  redir => out
+  ruby << RB
+    VIM.echo 'hello'
+  RB
+  redir END
+  Assert out =~# 'hello'
+
+Execute (VIM.echo (hl)):
+  redir => out
+  ruby << RB
+    VIM.echo 'hello', :Title
+  RB
+  redir END
+  " TODO: correctly highlighted?
+  Assert out =~# 'hello'
+
+Execute (VIM.error):
+  try
+    ruby << RB
+      VIM.error 'hello errors'
+  RB
+    Assert 0
+  catch
+    Assert 1
+  endtry
+  " TODO: messages output
+

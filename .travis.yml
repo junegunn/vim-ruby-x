@@ -2,11 +2,10 @@ language: vim
 
 before_script: |
   git clone https://github.com/junegunn/vader.vim.git
-  git clone https://github.com/junegunn/vim-ruby-x.git
 
 script: |
   vim -Nu <(cat << VIMRC
   set rtp+=vader.vim
-  set rtp+=vim-ruby-x
+  set rtp+=.
   VIMRC) -c 'Vader! test/*'
 

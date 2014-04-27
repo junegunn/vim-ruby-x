@@ -1,0 +1,13 @@
+language: vim
+
+before_script: |
+  mkdir -p ~/.vim/bundle
+  git clone https://github.com/junegunn/vader.vim.git ~/.vim/bundle/vader.vim
+  git clone https://github.com/junegunn/vim-ruby-x.git  ~/.vim/bundle/vim-ruby-x
+
+script: |
+  vim -Nu <(cat << VIMRC
+  set rtp+=~/.vim/bundle/vader.vim
+  set rtp+=~/.vim/bundle/vim-ruby-x
+  VIMRC) -c 'Vader! test/*'
+
